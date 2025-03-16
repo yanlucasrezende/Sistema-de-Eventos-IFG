@@ -5,13 +5,17 @@ from django.http import HttpResponse
 from .models import Evento
 from .forms import EventoForm
 
-class EventoListView(ListView):
+class EventoListView(LoginRequiredMixin, ListView):
     model = Evento
     template_name = 'eventos/evento_list.html'
     context_object_name = 'eventos'
-    # A listagem ficará disponível para todos (inclusive visitantes)
 
-# Somente administradores podem criar, editar e excluir eventos.
+    def dispatch(self, request, *args, **kwargs):
+        # Garante que apenas usuários autenticados possam acessar
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
 class EventoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Evento
     form_class = EventoForm

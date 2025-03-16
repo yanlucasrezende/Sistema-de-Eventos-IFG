@@ -3,6 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView
 from django.contrib.auth.models import User
 from .forms import UserCreationFormWithRole
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 class UserCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = User
@@ -22,3 +24,7 @@ class UserCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
              self.object.is_staff = False
          self.object.save()
          return response
+
+def custom_logout(request):
+    logout(request)
+    return redirect('login')
