@@ -1,44 +1,57 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <title>Lista de Eventos</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Font Awesome (para usar ícones) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="{% static 'eventos/css/style.css' %}">
 </head>
+
 <body>
   <header class="bg-dark text-white p-3 text-center">
-      <h1>Eventos</h1>
+    <h1>Eventos</h1>
   </header>
   <div class="container mt-4">
     <a class="btn btn-primary mb-3" href="{% url 'evento_create' %}">Criar Novo Evento</a>
     <ul class="list-group">
       {% for evento in eventos %}
-        <li class="list-group-item" id="evento-{{ evento.pk }}">
-          <h5>{{ evento.nome }}</h5>
-          <p>
-            <strong>Data de Início:</strong> {{ evento.data_inicio }} | 
-            <strong>Data de Fim:</strong> {{ evento.data_fim }}<br>
-            <strong>Inscrições:</strong> {{ evento.inscricao_inicio }} até {{ evento.inscricao_fim }}<br>
-            <strong>Link:</strong> {{ evento.link_inscricao }}<br>
-            <strong>Descrição:</strong> {{ evento.descricao }}<br>
-            <strong>Ativo:</strong> {{ evento.ativo|yesno:"Sim,Não" }}<br>
-            <strong>Tipo:</strong> {{ evento.get_tipo_display }}
-          </p>
-          <a class="btn btn-secondary" href="{% url 'evento_edit' evento.pk %}">Editar</a>
-          <!-- Botão de exclusão que chama a função showDeleteModal -->
-          <button class="btn btn-danger" onclick="showDeleteModal('{{ evento.pk }}', '{{ evento.nome }}')">Excluir</button>
-        </li>
+      <!-- Cada item é posicionado de forma relativa para ancorar os ícones -->
+      <li class="list-group-item" id="evento-{{ evento.pk }}" style="position: relative;">
+        <!-- Ícone de localização (clicável) -->
+        <div style="position: absolute; top: 10px; right: 10px; cursor: pointer;"
+          onclick="showLocationModal('{{ evento.nome_local }}', '{{ evento.link_maps }}')">
+          <i class="fas fa-map-marker-alt"></i>
+          <span style="margin-left: 5px;">Localização</span>
+        </div>
+        <h5 class="mt-4">{{ evento.nome }}</h5>
+        <p>
+          <strong>Data de Início:</strong> {{ evento.data_inicio|date:"d/m/Y" }} |
+          <strong>Data de Fim:</strong> {{ evento.data_fim|date:"d/m/Y" }}<br>
+          <strong>Inscrições:</strong> {{ evento.inscricao_inicio|date:"d/m/Y" }} até {{ evento.inscricao_fim|date:"d/m/Y" }}<br>
+          <strong>Link:</strong> {{ evento.link_inscricao }}<br>
+          <strong>Descrição:</strong> {{ evento.descricao }}<br>
+          <strong>Ativo:</strong> {{ evento.ativo|yesno:"Sim,Não" }}<br>
+          <strong>Tipo:</strong> {{ evento.get_tipo_display }}<br>
+          <strong>Local:</strong> {{ evento.nome_local }}
+        </p>
+        <a class="btn btn-secondary" href="{% url 'evento_edit' evento.pk %}">Editar</a>
+        <button class="btn btn-danger"
+          onclick="showDeleteModal('{{ evento.pk }}', '{{ evento.nome }}')">Excluir</button>
+      </li>
       {% empty %}
-        <li class="list-group-item">Nenhum evento encontrado.</li>
+      <li class="list-group-item">Nenhum evento encontrado.</li>
       {% endfor %}
     </ul>
   </div>
 
-  <!-- Modal de Confirmação de Exclusão -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <!-- Modal de Confirmação de Exclusão (já existente) -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -58,39 +71,60 @@
     </div>
   </div>
 
+  <!-- Novo Modal para exibir informações de localização -->
+  <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="locationModalLabel">Informações do Local</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Nome do Local:</strong> <span id="modalNomeLocal"></span></p>
+          <p><strong>Link do local:</strong>
+            <a id="modalLinkLocal" href="#" target="_blank">maps</a>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap JS e dependências -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  
+
   <!-- Script para exclusão via AJAX -->
   <script>
     let deleteUrl = '';
-    // Função para obter o token CSRF do cookie
     function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-              }
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
           }
+        }
       }
       return cookieValue;
     }
-    
-    // Função chamada quando o botão "Excluir" é clicado
+
     function showDeleteModal(eventoId, eventoNome) {
       document.getElementById('deleteMessage').innerText = 'Você tem certeza que deseja excluir o evento "' + eventoNome + '"?';
       deleteUrl = '/eventos/excluir/' + eventoId + '/';
       $('#deleteModal').modal('show');
     }
-    
-    // Ao clicar no botão de confirmar exclusão
-    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
       const csrftoken = getCookie('csrftoken');
       fetch(deleteUrl, {
         method: 'POST',
@@ -106,6 +140,14 @@
         }
       });
     });
+
+    // Função para mostrar o modal de localização
+    function showLocationModal(nomeLocal, linkMaps) {
+      document.getElementById('modalNomeLocal').innerText = nomeLocal;
+      document.getElementById('modalLinkLocal').href = linkMaps;
+      $('#locationModal').modal('show');
+    }
   </script>
 </body>
+
 </html>

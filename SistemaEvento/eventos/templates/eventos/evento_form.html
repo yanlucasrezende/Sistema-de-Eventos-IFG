@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>{% if object %}Editar{% else %}Criar{% endif %} Evento</title>
     <link rel="stylesheet" type="text/css" href="{% static 'eventos/css/style.css' %}">
+    <!-- Incluindo Bootstrap para ajudar no layout -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <header>
@@ -13,11 +15,34 @@
     <div class="container">
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Salvar</button>
+            {% for field in form %}
+                {% if field.name == "tipo" %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        <div id="tipo-container">
+                            {% for radio in field %}
+                                <div class="radio-row" style="display: inline-block; width: 30%; margin-right: 2%;">
+                                    {{ radio.tag }} {{ radio.choice_label }}
+                                </div>
+                                {% if forloop.counter|divisibleby:"3" %}
+                                    <div style="clear: both;"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {{ field.errors }}
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Salvar</button>
         </form>
         <br>
-        <a class="button" href="{% url 'evento_list' %}">Voltar para a lista</a>
+        <a class="btn btn-secondary" href="{% url 'evento_list' %}">Voltar para a lista</a>
     </div>
 </body>
 </html>

@@ -14,6 +14,8 @@ class EventoForm(forms.ModelForm):
             'descricao',
             'ativo',
             'tipo',
+            'nome_local',  # novo
+            'link_maps'    # novo
         ]
         widgets = {
             'data_inicio': forms.DateInput(attrs={'type': 'date'}),

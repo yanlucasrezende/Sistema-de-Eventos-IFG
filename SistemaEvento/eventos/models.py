@@ -15,10 +15,10 @@ TIPO_EVENTO_CHOICES = [
 
 class Evento(models.Model):
     nome = models.CharField(max_length=255)
-    data_inicio = models.DateField(null=True, blank=True)
-    data_fim = models.DateField(null=True, blank=True)
-    inscricao_inicio = models.DateField(null=True, blank=True)
-    inscricao_fim = models.DateField(null=True, blank=True)
+    data_inicio = models.DateField(blank=True, null=True)
+    data_fim = models.DateField(blank=True, null=True)
+    inscricao_inicio = models.DateField(blank=True, null=True)
+    inscricao_fim = models.DateField(blank=True, null=True)
     link_inscricao = models.URLField(blank=True, null=True)
     descricao = models.TextField(blank=True, null=True)
     ativo = models.BooleanField(default=True)
@@ -27,6 +27,9 @@ class Evento(models.Model):
         choices=TIPO_EVENTO_CHOICES,
         default='outros'
     )
+    # Novos campos:
+    nome_local = models.CharField(max_length=255, blank=True, null=True)
+    link_maps = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.nome
