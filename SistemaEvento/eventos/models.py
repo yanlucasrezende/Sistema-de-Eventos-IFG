@@ -1,0 +1,32 @@
+from django.db import models
+
+TIPO_EVENTO_CHOICES = [
+    ('seminario', 'Seminário'),
+    ('congresso', 'Congresso'),
+    ('olimpiada', 'Olimpíada'),
+    ('feira', 'Feira'),
+    ('festival', 'Festival'),
+    ('exposicao', 'Exposição'),
+    ('encontro', 'Encontro'),
+    ('curso', 'Curso'),
+    ('treinamento', 'Treinamento'),
+    ('outros', 'Outros'),
+]
+
+class Evento(models.Model):
+    nome = models.CharField(max_length=255)
+    data_inicio = models.DateField(null=True, blank=True)
+    data_fim = models.DateField(null=True, blank=True)
+    inscricao_inicio = models.DateField(null=True, blank=True)
+    inscricao_fim = models.DateField(null=True, blank=True)
+    link_inscricao = models.URLField(blank=True, null=True)
+    descricao = models.TextField(blank=True, null=True)
+    ativo = models.BooleanField(default=True)
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_EVENTO_CHOICES,
+        default='outros'
+    )
+
+    def __str__(self):
+        return self.nome

@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if object %}Editar{% else %}Criar{% endif %} Evento</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'eventos/css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>{% if object %}Editar{% else %}Criar{% endif %} Evento</h1>
+    </header>
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Salvar</button>
+        </form>
+        <br>
+        <a class="button" href="{% url 'evento_list' %}">Voltar para a lista</a>
+    </div>
+</body>
+</html>

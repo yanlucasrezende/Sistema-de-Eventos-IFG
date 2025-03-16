@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Eventos</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'eventos/css/style.css' %}">
+</head>
+<body>
+  <header class="bg-dark text-white p-3 text-center">
+      <h1>Eventos</h1>
+  </header>
+  <div class="container mt-4">
+    <a class="btn btn-primary mb-3" href="{% url 'evento_create' %}">Criar Novo Evento</a>
+    <ul class="list-group">
+      {% for evento in eventos %}
+        <li class="list-group-item" id="evento-{{ evento.pk }}">
+          <h5>{{ evento.nome }}</h5>
+          <p>
+            <strong>Data de Início:</strong> {{ evento.data_inicio }} | 
+            <strong>Data de Fim:</strong> {{ evento.data_fim }}<br>
+            <strong>Inscrições:</strong> {{ evento.inscricao_inicio }} até {{ evento.inscricao_fim }}<br>
+            <strong>Link:</strong> {{ evento.link_inscricao }}<br>
+            <strong>Descrição:</strong> {{ evento.descricao }}<br>
+            <strong>Ativo:</strong> {{ evento.ativo|yesno:"Sim,Não" }}<br>
+            <strong>Tipo:</strong> {{ evento.get_tipo_display }}
+          </p>
+          <a class="btn btn-secondary" href="{% url 'evento_edit' evento.pk %}">Editar</a>
+          <!-- Botão de exclusão que chama a função showDeleteModal -->
+          <button class="btn btn-danger" onclick="showDeleteModal('{{ evento.pk }}', '{{ evento.nome }}')">Excluir</button>
+        </li>
+      {% empty %}
+        <li class="list-group-item">Nenhum evento encontrado.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirmar Exclusão</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="deleteMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS e dependências -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+  <!-- Script para exclusão via AJAX -->
+  <script>
+    let deleteUrl = '';
+    // Função para obter o token CSRF do cookie
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
+    
+    // Função chamada quando o botão "Excluir" é clicado
+    function showDeleteModal(eventoId, eventoNome) {
+      document.getElementById('deleteMessage').innerText = 'Você tem certeza que deseja excluir o evento "' + eventoNome + '"?';
+      deleteUrl = '/eventos/excluir/' + eventoId + '/';
+      $('#deleteModal').modal('show');
+    }
+    
+    // Ao clicar no botão de confirmar exclusão
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+      const csrftoken = getCookie('csrftoken');
+      fetch(deleteUrl, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+        }
+      }).then(response => {
+        if (response.ok) {
+          $('#deleteModal').modal('hide');
+          location.reload();
+        } else {
+          alert('Ocorreu um erro ao tentar excluir o evento.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
