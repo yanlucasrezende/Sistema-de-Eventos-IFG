@@ -65,7 +65,42 @@ form {
     margin-bottom: 20px;
 }
 
-/* Excluímos o formulário de logout dessa regra */
+/* Aumentamos um pouco o tamanho dos campos de entrada */
+form input[type="text"],
+form input[type="date"],
+form input[type="password"],
+form input[type="email"],
+form textarea,
+form input[type="url"] {
+    width: 100%;
+    padding: 12px;         /* aumento do padding */
+    margin-bottom: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1.1rem;      /* aumento do tamanho da fonte */
+}
+
+form input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+form button {
+    background-color: #28a745;
+    border: none;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+/* -------------------
+   EXCLUIR O FORM DE LOGOUT DA REGRA ACIMA
+   (para que o botão de logout não fique verde)
+-------------------- */
 form:not(.logout-form) button {
     background-color: #28a745;
     border: none;
@@ -77,21 +112,6 @@ form:not(.logout-form) button {
 
 form:not(.logout-form) button:hover {
     background-color: #218838;
-}
-
-form input[type="text"],
-form input[type="date"],
-form textarea,
-form input[type="url"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-}
-
-form input[type="checkbox"] {
-    margin-right: 5px;
 }
 
 /* -------------------

@@ -15,7 +15,31 @@
     <div class="container mt-4">
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Nome de Usuário:</label><br>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">E-mail:</label><br>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+            <div class="form-group">
+                <label>Tipo de Usuário:</label><br>
+                {{ form.role }}
+                {{ form.role.errors }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Senha:</label><br>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirmar Senha:</label><br>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
             <button type="submit" class="btn btn-primary">Criar Usuário</button>
         </form>
         <br>
