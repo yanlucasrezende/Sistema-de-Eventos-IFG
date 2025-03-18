@@ -28,9 +28,10 @@ class EventoForm(forms.ModelForm):
 class AtividadeForm(forms.ModelForm):
     class Meta:
         model = Atividade
-        fields = ['descricao', 'data_inicio', 'data_fim', 'local', 'tipo']
+        fields = ['descricao', 'data_inicio', 'data_fim', 'local', 'limite_vagas', 'tipo']
         widgets = {
             'data_inicio': forms.DateInput(attrs={'type': 'date'}),
             'data_fim': forms.DateInput(attrs={'type': 'date'}),
+            'limite_vagas': forms.NumberInput(attrs={'type': 'number'}),
             'tipo': forms.RadioSelect(),  # Apresenta as opções como botões de rádio
         }

@@ -40,6 +40,7 @@ class Atividade(models.Model):
     data_inicio = models.DateField()
     data_fim = models.DateField()
     local = models.CharField(max_length=255)
+    limite_vagas = models.IntegerField(blank=True, null=True)
     TIPO_ATIVIDADE_CHOICES = [
         ('alimentacao', 'Alimentação'),
         ('apresentacao_artistica', 'Apresentação Artística'),

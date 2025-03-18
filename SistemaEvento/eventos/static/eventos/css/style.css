@@ -169,5 +169,5 @@ form:not(.logout-form) button:hover {
 
 /* Opcional: aumentar espaçamento das células para evitar quebras indesejadas */
 .activity-table td {
-    min-width: 120px;
+    min-width: 90%;
 }
