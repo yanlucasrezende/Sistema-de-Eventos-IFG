@@ -33,3 +33,26 @@ class Evento(models.Model):
 
     def __str__(self):
         return self.nome
+
+class Atividade(models.Model):
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='atividades')
+    descricao = models.TextField()
+    data_inicio = models.DateField()
+    data_fim = models.DateField()
+    local = models.CharField(max_length=255)
+    TIPO_ATIVIDADE_CHOICES = [
+        ('alimentacao', 'Alimentação'),
+        ('apresentacao_artistica', 'Apresentação Artística'),
+        ('apresentacao_trabalho_cientifico', 'Apresentação de Trabalho Científico'),
+        ('cerimonia', 'Cerimônia'),
+        ('coloquio', 'Colóquio'),
+        ('conferencia', 'Conferência'),
+        ('curso', 'Curso'),
+        ('divulgacao', 'Divulgação'),
+        ('encontro', 'Encontro'),
+        ('espetaculo', 'Espetáculo'),
+    ]
+    tipo = models.CharField(max_length=50, choices=TIPO_ATIVIDADE_CHOICES)
+
+    def __str__(self):
+        return f"{self.evento.nome} - {self.get_tipo_display()}"

@@ -16,8 +16,8 @@ header {
 }
 
 .container {
-    width: 80%;
-    max-width: 800px;
+    width: 90%;
+    max-width: 1000px;
     margin: 20px auto;
 }
 
@@ -65,7 +65,7 @@ form {
     margin-bottom: 20px;
 }
 
-/* Aumentamos um pouco o tamanho dos campos de entrada */
+/* Aumentamos o tamanho dos campos de entrada */
 form input[type="text"],
 form input[type="date"],
 form input[type="password"],
@@ -146,4 +146,28 @@ form:not(.logout-form) button:hover {
 
 .logout-btn:hover {
     background-color: #2a2f36 !important;
+}
+
+/* -------------------
+   ESTILOS PARA TABELA DE ATIVIDADES
+-------------------- */
+.activity-table {
+    width: 100%;
+    table-layout: auto;
+    margin-bottom: 20px;
+}
+
+.activity-table th, .activity-table td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.activity-table th {
+    background-color: #f1f1f1;
+    text-align: center;
+}
+
+/* Opcional: aumentar espaçamento das células para evitar quebras indesejadas */
+.activity-table td {
+    min-width: 120px;
 }

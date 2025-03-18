@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if object %}Editar Atividade{% else %}Cadastrar Atividade{% endif %}</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Seu CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'eventos/css/style.css' %}">
+</head>
+<body>
+    <header class="bg-dark text-white p-3 text-center">
+        <h1>{% if object %}Editar Atividade{% else %}Cadastrar Atividade{% endif %}</h1>
+    </header>
+    <div class="container mt-4">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label><br>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">
+                {% if object %}Salvar Alterações{% else %}Cadastrar{% endif %}
+            </button>
+        </form>
+        <br>
+        {% if object %}
+            <a class="btn btn-secondary" href="{% url 'atividade_list' object.evento.pk %}">Voltar para Atividades</a>
+        {% else %}
+            <a class="btn btn-secondary" href="{% url 'atividade_list' view.kwargs.evento_pk %}">Voltar para Atividades</a>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

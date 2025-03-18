@@ -49,6 +49,8 @@
             <a class="btn btn-secondary" href="{% url 'evento_edit' evento.pk %}">Editar</a>
             <button class="btn btn-danger" onclick="showDeleteModal('{{ evento.pk }}', '{{ evento.nome }}')">Excluir</button>
           {% endif %}
+          <!-- Botão Atividades (visível para todos usuários autenticados) -->
+          <a class="btn btn-info" href="{% url 'atividade_list' evento.pk %}">Atividades</a>
         </li>
       {% empty %}
         <li class="list-group-item">Nenhum evento encontrado.</li>
