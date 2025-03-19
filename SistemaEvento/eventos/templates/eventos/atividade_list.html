@@ -15,6 +15,16 @@
     <header class="bg-dark text-white p-3 text-center">
         <h1>Atividades do Evento: {{ evento.nome }}</h1>
     </header>
+    
+    <!-- Exibição de mensagens -->
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
     <div class="container mt-4">
         {% if request.user.is_staff %}
             <a class="btn btn-primary mb-3" href="{% url 'atividade_create' evento.pk %}">Cadastrar Atividade</a>
@@ -31,6 +41,8 @@
                         <th>Tipo</th>
                         {% if request.user.is_staff %}
                             <th>Ações</th>
+                        {% else %}
+                            <th>Inscrição</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -49,6 +61,15 @@
                                 <td>
                                     <a class="btn btn-secondary btn-sm" href="{% url 'atividade_edit' atividade.pk %}">Editar</a>
                                     <button class="btn btn-danger btn-sm" onclick="showDeleteModal('{{ atividade.pk }}', '{{ atividade.descricao }}')">Excluir</button>
+                                    <a class="btn btn-info btn-sm" href="{% url 'inscritos_list' atividade.pk %}">Ver Inscritos</a>
+                                </td>
+                            {% else %}
+                                <td>
+                                    {% if request.user in atividade.inscritos.all %}
+                                        <a class="btn btn-warning btn-sm" href="{% url 'inscrever_atividade' atividade.pk %}">Retirar Inscrição</a>
+                                    {% else %}
+                                        <a class="btn btn-success btn-sm" href="{% url 'inscrever_atividade' atividade.pk %}">Inscrever</a>
+                                    {% endif %}
                                 </td>
                             {% endif %}
                         </tr>

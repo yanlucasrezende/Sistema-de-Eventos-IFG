@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User  # Import necessário
 
 TIPO_EVENTO_CHOICES = [
     ('seminario', 'Seminário'),
@@ -54,6 +55,9 @@ class Atividade(models.Model):
         ('espetaculo', 'Espetáculo'),
     ]
     tipo = models.CharField(max_length=50, choices=TIPO_ATIVIDADE_CHOICES)
+    
+    # Novo campo para armazenar os usuários inscritos na atividade
+    inscritos = models.ManyToManyField(User, blank=True, related_name='atividades_inscritas')
 
     def __str__(self):
         return f"{self.evento.nome} - {self.get_tipo_display()}"
